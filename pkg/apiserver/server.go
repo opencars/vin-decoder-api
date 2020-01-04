@@ -38,7 +38,7 @@ func (s *server) decodeVIN() Handler {
 			return ErrInvalidVIN
 		}
 
-		vin, err := govin.Parse(mux.Vars(r)["vin"])
+		vin, err := govin.Parse(lexeme)
 		if err != nil {
 			return err
 		}

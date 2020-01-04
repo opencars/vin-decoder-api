@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// Start starts http server on the specified addr.
 func Start(addr string) error {
 	srv := newServer()
 

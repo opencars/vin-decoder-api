@@ -8,6 +8,7 @@ import (
 )
 
 const chars = "ABCDEFGHIJKLMNOPRSTUVWXYZ1234567890"
+const yearSym = "ABCDEFGHJKLMNPRSTVWXY123456789"
 
 var weights = []int{8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2}
 
@@ -38,7 +39,8 @@ const (
 	SouthAmerica Region = "South America"
 )
 
-func (region Region) String() {
+func IndexOf(lexeme string) int {
+	return strings.IndexByte(chars, lexeme[0])*len(chars) + strings.IndexByte(chars, lexeme[1])
 }
 
 func (vin *VIN) WMI() string {
@@ -153,11 +155,8 @@ func (vin VIN) Check() bool {
 	}
 }
 
-// 2010, 1980
-const yearSym = "ABCDEFGHJKLMNPRSTVWXY123456789"
-
-func (vin VIN) Year() int {
-	year := time.Now().Year() + 1 // 2021
+func (vin VIN) Year() uint {
+	year := time.Now().Year() + 1
 	yearIndex := (year - 2010) % len(yearSym)
 
 	i := strings.IndexRune(yearSym, vin.ModelYear())
@@ -166,14 +165,14 @@ func (vin VIN) Year() int {
 	}
 
 	if i <= yearIndex {
-		return year - (yearIndex - i)
+		return uint(year - (yearIndex - i))
 	}
 
-	return 2010 - len(yearSym) + i
+	return uint(2010 - len(yearSym) + i)
 }
 
 func (vin VIN) Manufacturer() string {
-	res, ok := manufacturers[vin.WMI()]
+	res, ok := manufacturers[vin.wmi]
 
 	if !ok {
 		return fmt.Sprintf("Unknown (WMI: %s)", vin)
@@ -182,12 +181,8 @@ func (vin VIN) Manufacturer() string {
 	return res
 }
 
-func IndexOf(lexeme string) int {
-	return strings.IndexByte(chars, lexeme[0])*len(chars) + strings.IndexByte(chars, lexeme[1])
-}
-
 func (vin VIN) Country() string {
-	qi := IndexOf(vin.WMI()[:2])
+	qi := IndexOf(vin.wmi[:2])
 	for _, country := range countries {
 		i := IndexOf(country.From)
 		j := IndexOf(country.To)
@@ -200,7 +195,7 @@ func (vin VIN) Country() string {
 }
 
 func (vin VIN) Make() string {
-	res, ok := makes[vin.WMI()]
+	res, ok := makes[vin.wmi]
 
 	if !ok {
 		return fmt.Sprintf("Unknown (WMI: %s)", vin)
