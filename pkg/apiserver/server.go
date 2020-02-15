@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
 	"github.com/opencars/vin-decoder-api/pkg/govin"
@@ -28,7 +29,12 @@ func (s *server) configureRouter() {
 }
 
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	s.router.ServeHTTP(w, r)
+	origins := handlers.AllowedOrigins([]string{"*"})
+	methods := handlers.AllowedMethods([]string{"GET", "OPTIONS"})
+	headers := handlers.AllowedHeaders([]string{"X-Api-Key", "Api-Key"})
+
+	cors := handlers.CORS(origins, methods, headers)(s.router)
+	cors.ServeHTTP(w, r)
 }
 
 func (s *server) decodeVIN() Handler {
