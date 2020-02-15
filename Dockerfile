@@ -26,3 +26,4 @@ WORKDIR /app
 COPY --from=build /go/bin/ ./
 
 EXPOSE 8080
+CMD ["./server"]
