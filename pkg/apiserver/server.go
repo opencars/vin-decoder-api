@@ -7,25 +7,25 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
+	"github.com/opencars/vin-decoder-api/pkg/apiserver/handler"
 	"github.com/opencars/vin-decoder-api/pkg/govin"
+	"github.com/opencars/vin-decoder-api/pkg/store"
 )
 
 type server struct {
 	router *mux.Router
+	store  store.Store
 }
 
-func newServer() *server {
+func newServer(store store.Store) *server {
 	srv := server{
 		router: mux.NewRouter(),
+		store:  store,
 	}
 
 	srv.configureRouter()
 
 	return &srv
-}
-
-func (s *server) configureRouter() {
-	s.router.Handle("/api/v1/vin-decoder/{vin}", s.decodeVIN())
 }
 
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -37,11 +37,12 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	cors.ServeHTTP(w, r)
 }
 
-func (s *server) decodeVIN() Handler {
+func (s *server) decodeVIN() handler.Handler {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		lexeme := mux.Vars(r)["vin"]
+
 		if !govin.Valid(lexeme) {
-			return ErrInvalidVIN
+			return handler.ErrInvalidVIN
 		}
 
 		vin, err := govin.Parse(lexeme)
@@ -49,7 +50,7 @@ func (s *server) decodeVIN() Handler {
 			return err
 		}
 
-		result := NewResult(vin)
+		result := NewResult(s.store, vin)
 		if err := json.NewEncoder(w).Encode(result); err != nil {
 			return err
 		}

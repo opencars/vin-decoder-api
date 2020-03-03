@@ -10,6 +10,18 @@ Build the binary
 make
 ```
 
+Start postgres
+
+```sh
+docker-compose up -Vd
+```
+
+Run sql migrations
+
+```sh
+migrate -source file://migrations -database postgres://postgres:@127.0.0.1:5432/vin-decoder_test\?sslmode=disable up
+```
+
 Run the web server
 
 ```sh
@@ -32,6 +44,7 @@ http http://localhost:8080/api/v1/vin-decoder/5YJXCCE40GF010543
     "make": "Tesla",
     "manufacturer": "Tesla, Inc.",
     "region": "North America",
+    "serial": "010543",
     "year": 2016
   },
   "vin": {
