@@ -158,20 +158,22 @@ func (vin VIN) Check() bool {
 	}
 }
 
-func (vin VIN) Year() uint {
+func (vin VIN) Year() *uint {
 	year := time.Now().Year() + 1
 	yearIndex := (year - 2010) % len(yearSym)
 
 	i := strings.IndexRune(yearSym, vin.ModelYear())
 	if i == -1 {
-		return 0
+		return nil
 	}
 
 	if i <= yearIndex {
-		return uint(year - (yearIndex - i))
+		res := uint(year - (yearIndex - i))
+		return &res
 	}
 
-	return uint(2010 - len(yearSym) + i)
+	res := uint(2010 - len(yearSym) + i)
+	return &res
 }
 
 func (vin VIN) Manufacturer(store store.Store) string {

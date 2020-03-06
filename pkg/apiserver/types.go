@@ -22,7 +22,7 @@ type VIN struct {
 type Vehicle struct {
 	Manufacturer string       `json:"manufacturer"`
 	Country      string       `json:"country"`
-	Year         uint         `json:"year"`
+	Year         *uint        `json:"year,omitempty"`
 	Region       govin.Region `json:"region"`
 	Make         string       `json:"make"`
 	Check        bool         `json:"check"`
