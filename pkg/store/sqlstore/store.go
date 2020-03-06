@@ -2,6 +2,7 @@ package sqlstore
 
 import (
 	"fmt"
+
 	"github.com/opencars/vin-decoder-api/pkg/store"
 
 	"github.com/jmoiron/sqlx"

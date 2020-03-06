@@ -2,11 +2,12 @@ package govin
 
 import (
 	"fmt"
-	"github.com/opencars/vin-decoder-api/pkg/store"
 	"log"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/opencars/vin-decoder-api/pkg/store"
 )
 
 const chars = "ABCDEFGHIJKLMNOPRSTUVWXYZ1234567890"
