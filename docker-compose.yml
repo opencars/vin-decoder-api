@@ -1,0 +1,15 @@
+version: "3.3"
+
+services:
+  postgres:
+    image: postgres:12.0
+    restart: on-failure
+    environment:
+      POSTGRES_DB: "vin-decoder_test"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres-data: {}

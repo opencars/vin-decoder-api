@@ -2,6 +2,7 @@ package apiserver
 
 import (
 	"github.com/opencars/vin-decoder-api/pkg/govin"
+	"github.com/opencars/vin-decoder-api/pkg/store"
 )
 
 // Result is a union of information about vin-code and decoded vehicle.
@@ -27,7 +28,7 @@ type Vehicle struct {
 	Check        bool         `json:"check"`
 }
 
-func NewResult(vin *govin.VIN) *Result {
+func NewResult(store store.Store, vin *govin.VIN) *Result {
 	return &Result{
 		VIN: VIN{
 			WMI: vin.WMI(),
@@ -35,7 +36,7 @@ func NewResult(vin *govin.VIN) *Result {
 			VIS: vin.VIS(),
 		},
 		Vehicle: Vehicle{
-			Manufacturer: vin.Manufacturer(),
+			Manufacturer: vin.Manufacturer(store),
 			Country:      vin.Country(),
 			Year:         vin.Year(),
 			Region:       vin.Region(),

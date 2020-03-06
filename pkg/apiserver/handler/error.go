@@ -1,4 +1,4 @@
-package apiserver
+package handler
 
 var (
 	ErrInvalidVIN = NewError(400, "vin.is_not_valid")

@@ -2,9 +2,12 @@ package govin
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/opencars/vin-decoder-api/pkg/store"
 )
 
 const chars = "ABCDEFGHIJKLMNOPRSTUVWXYZ1234567890"
@@ -78,7 +81,7 @@ func (vin VIN) Region() Region {
 		return SouthAmerica
 	}
 
-	return Region("Unknown")
+	return "Unknown"
 }
 
 // Carry out VIN validation. A valid [number] must be 17 characters long and contain only valid alphanumeric characters.
@@ -171,14 +174,14 @@ func (vin VIN) Year() uint {
 	return uint(2010 - len(yearSym) + i)
 }
 
-func (vin VIN) Manufacturer() string {
-	res, ok := manufacturers[vin.wmi]
-
-	if !ok {
-		return fmt.Sprintf("Unknown (WMI: %s)", vin)
+func (vin VIN) Manufacturer(store store.Store) string {
+	manufacturer, err := store.Manufacturer().FindByWMI(vin.wmi)
+	if err != nil {
+		log.Println(err)
+		return "Unknown"
 	}
 
-	return res
+	return manufacturer.Name
 }
 
 func (vin VIN) Country() string {
@@ -198,7 +201,7 @@ func (vin VIN) Make() string {
 	res, ok := makes[vin.wmi]
 
 	if !ok {
-		return fmt.Sprintf("Unknown (WMI: %s)", vin)
+		return fmt.Sprintf("Unknown")
 	}
 
 	return res

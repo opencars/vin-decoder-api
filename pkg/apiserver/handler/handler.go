@@ -1,4 +1,4 @@
-package apiserver
+package handler
 
 import (
 	"encoding/json"
@@ -12,6 +12,7 @@ type Handler func(w http.ResponseWriter, r *http.Request) error
 // ServeHTTP allows our Handler type to satisfy http.Handler.
 func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
 	if err := h(w, r); err != nil {
 		switch e := err.(type) {
 		case Error:

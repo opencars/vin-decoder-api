@@ -6,6 +6,10 @@ jobs:
       - image: circleci/golang:1.13
         environment:
           GO111MODULE: "on"
+      - image: circleci/postgres:9.6-alpine
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: vin-decoder_test
     working_directory: /go/src/github.com/opencars/vin-decoder-api
     steps:
       - checkout
@@ -23,6 +27,25 @@ jobs:
             - "/go/pkg/mod"
 
       - run:
+          name: "Waiting for Postgres to be ready"
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 5432 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for Postgres && exit 1
+
+      - run:
+          name: "Run migrations"
+          environment:
+            GO111MODULE: "off"
+          command: |
+            go get -tags 'postgres' -u github.com/golang-migrate/migrate/cmd/migrate
+            migrate -source file://migrations -database postgres://postgres:@localhost:5432/vin-decoder_test\?sslmode=disable up
+
+      - run:
           name: "Run Tests"
           command: "go test -v -bench=. -race ./..."
 
@@ -35,7 +58,7 @@ jobs:
             GO111MODULE=on golangci-lint run
 
       - run:
-          name: Build Project Binary
+          name: "Build Project Binary"
           command: |
             go build -o ./bin/server ./cmd/server/main.go
 
