@@ -24,7 +24,6 @@ type Vehicle struct {
 	Country      string       `json:"country"`
 	Year         *uint        `json:"year,omitempty"`
 	Region       govin.Region `json:"region"`
-	Make         string       `json:"make"`
 	Check        bool         `json:"check"`
 }
 
@@ -40,7 +39,6 @@ func NewResult(store store.Store, vin *govin.VIN) *Result {
 			Country:      vin.Country(),
 			Year:         vin.Year(),
 			Region:       vin.Region(),
-			Make:         vin.Make(),
 			Check:        vin.Check(),
 		},
 	}

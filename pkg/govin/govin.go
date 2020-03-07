@@ -1,7 +1,6 @@
 package govin
 
 import (
-	"fmt"
 	"log"
 	"regexp"
 	"strings"
@@ -197,14 +196,4 @@ func (vin VIN) Country() string {
 	}
 
 	return "Not assigned"
-}
-
-func (vin VIN) Make() string {
-	res, ok := makes[vin.wmi]
-
-	if !ok {
-		return fmt.Sprintf("Unknown")
-	}
-
-	return res
 }

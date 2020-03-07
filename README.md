@@ -41,7 +41,6 @@ http http://localhost:8080/api/v1/vin-decoder/5YJXCCE40GF010543
   "vehicle": {
     "check_digit": true,
     "country": "United States",
-    "make": "Tesla",
     "manufacturer": "Tesla, Inc.",
     "region": "North America",
     "serial": "010543",
