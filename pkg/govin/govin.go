@@ -138,7 +138,7 @@ func value(b byte) int {
 }
 
 func (vin VIN) Check() bool {
-	if vin.Region() == Europe {
+	if vin.Region() != NorthAmerica {
 		return true
 	}
 
