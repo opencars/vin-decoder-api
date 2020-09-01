@@ -16,6 +16,7 @@ type Database struct {
 	User     string `toml:"username"`
 	Password string `toml:"password"`
 	Name     string `toml:"database"`
+	SSLMode  string `toml:"ssl_mode"`
 }
 
 // New reads application configuration from specified file path.

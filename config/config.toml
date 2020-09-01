@@ -4,3 +4,4 @@ port = 5432
 username = "postgres"
 password = ""
 database = "vin-decoder"
+ssl_mode = "disable"
