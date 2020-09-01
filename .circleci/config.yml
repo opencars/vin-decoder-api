@@ -3,7 +3,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/golang:1.13
+      - image: circleci/golang:1.15
         environment:
           GO111MODULE: "on"
       - image: circleci/postgres:12
@@ -65,7 +65,7 @@ jobs:
 
   release:
     docker:
-      - image: circleci/golang:1.13
+      - image: circleci/golang:1.15
         environment:
           GO111MODULE: "off"
           USER_NAME: "Ali Shanaakh"
