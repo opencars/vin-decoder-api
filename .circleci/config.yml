@@ -52,11 +52,9 @@ jobs:
 
       - run:
           name: "Lint Code"
-          environment:
-            GO111MODULE: "off"
           command: |
-            go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
-            GO111MODULE=on golangci-lint run
+            wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.27.0
+            ./bin/golangci-lint run
 
       - run:
           name: "Build Project Binary"
