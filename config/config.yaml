@@ -1,3 +1,13 @@
+log:
+  level: "debug"
+  mode:  "dev"
+
+server:
+  shutdown_timeout: "15s"
+  read_timeout: "10s"
+  write_timeout: "10s"
+  idle_timeout: "10s"
+
 database:
   host: "127.0.0.1"
   port: 5432
@@ -5,3 +15,10 @@ database:
   password: "password"
   database: "vin-decoder"
   ssl_mode: "disable"
+
+
+nats:
+  host: "127.0.0.1"
+  port: 4222
+  user: "opencars"
+  password: "opencars"
