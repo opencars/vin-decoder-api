@@ -1,12 +1,13 @@
-package govin
+package service
 
 import (
-	"log"
-	"regexp"
+	"errors"
 	"strings"
 	"time"
 
-	"github.com/opencars/vin-decoder-api/pkg/store"
+	"github.com/opencars/seedwork/logger"
+	"github.com/opencars/vin-decoder-api/pkg/domain"
+	"github.com/opencars/vin-decoder-api/pkg/domain/model"
 )
 
 const chars = "ABCDEFGHIJKLMNOPRSTUVWXYZ1234567890"
@@ -14,9 +15,7 @@ const yearSym = "ABCDEFGHJKLMNPRSTVWXY123456789"
 
 var weights = []int{8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2}
 
-func Parse(number string) (*VIN, error) {
-	value := Normalize(number)
-
+func Parse(value string) (*VIN, error) {
 	return &VIN{
 		wmi: value[0:3],
 		vds: value[3:9],
@@ -29,17 +28,6 @@ type VIN struct {
 	vds string // The Vehicle Descriptor Section (VDS) code.
 	vis string // The Vehicle Identifier Section (VIS) code.
 }
-
-type Region string
-
-const (
-	Africa       Region = "Africa"
-	Asia         Region = "Asia"
-	Europe       Region = "Europe"
-	NorthAmerica Region = "North America"
-	Oceania      Region = "Oceania"
-	SouthAmerica Region = "South America"
-)
 
 func IndexOf(lexeme string) int {
 	return strings.IndexByte(chars, lexeme[0])*len(chars) + strings.IndexByte(chars, lexeme[1])
@@ -62,35 +50,25 @@ func (vin *VIN) String() string {
 }
 
 // Obtain the 2-character region code for the manufacturing region.
-func (vin VIN) Region() Region {
+func (vin VIN) Region() model.Region {
 	region := vin.wmi[0]
 
 	switch {
 	case region >= 'A' && region <= 'H':
-		return Africa
+		return model.Africa
 	case region >= 'J' && region <= 'R':
-		return Asia
+		return model.Asia
 	case region >= 'S' && region <= 'Z':
-		return Europe
+		return model.Europe
 	case region >= '1' && region <= '5':
-		return NorthAmerica
+		return model.NorthAmerica
 	case region >= '6' && region <= '7':
-		return Oceania
+		return model.Oceania
 	case region >= '8' && region <= '9':
-		return SouthAmerica
+		return model.SouthAmerica
 	}
 
 	return "Unknown"
-}
-
-// Carry out VIN validation. A valid [number] must be 17 characters long and contain only valid alphanumeric characters.
-func (vin VIN) Valid() bool {
-	matched, err := regexp.MatchString(`^[A-HJ-NPR-Z0-9]{17}$`, vin.String())
-	if err != nil {
-		return false
-	}
-
-	return matched
 }
 
 // Extract the single-character model year from the [number].
@@ -138,7 +116,7 @@ func value(b byte) int {
 }
 
 func (vin VIN) Check() bool {
-	if vin.Region() != NorthAmerica {
+	if vin.Region() != model.NorthAmerica {
 		return true
 	}
 
@@ -175,10 +153,14 @@ func (vin VIN) Year() *uint {
 	return &res
 }
 
-func (vin VIN) Manufacturer(store store.Store) string {
-	manufacturer, err := store.Manufacturer().FindByWMI(vin.wmi)
+func (vin VIN) Manufacturer(repo domain.ManufacturerRepository) string {
+	manufacturer, err := repo.FindByWMI(vin.wmi)
+	if errors.Is(err, model.ErrManufacturerNotFound) {
+		return "Unknown"
+	}
+
 	if err != nil {
-		log.Println(err)
+		logger.Errorf("failed to retrive manufacturer name: %s", err)
 		return "Unknown"
 	}
 

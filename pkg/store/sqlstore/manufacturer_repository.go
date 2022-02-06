@@ -1,7 +1,10 @@
 package sqlstore
 
 import (
-	"github.com/opencars/vin-decoder-api/pkg/model"
+	"database/sql"
+	"errors"
+
+	"github.com/opencars/vin-decoder-api/pkg/domain/model"
 )
 
 type ManufacturerRepository struct {
@@ -31,6 +34,11 @@ func (r *ManufacturerRepository) FindByWMI(wmi string) (*model.Manufacturer, err
 		`SELECT wmi, name FROM manufacturers WHERE wmi = $1`,
 		wmi,
 	)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, model.ErrManufacturerNotFound
+	}
+
 	if err != nil {
 		return nil, err
 	}

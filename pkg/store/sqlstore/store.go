@@ -3,7 +3,7 @@ package sqlstore
 import (
 	"fmt"
 
-	"github.com/opencars/vin-decoder-api/pkg/store"
+	"github.com/opencars/vin-decoder-api/pkg/domain"
 
 	"github.com/jmoiron/sqlx"
 
@@ -16,7 +16,7 @@ type Store struct {
 	manufacturerRepository *ManufacturerRepository
 }
 
-func (s *Store) Manufacturer() store.ManufacturerRepository {
+func (s *Store) Manufacturer() domain.ManufacturerRepository {
 	if s.manufacturerRepository == nil {
 		s.manufacturerRepository = &ManufacturerRepository{
 			store: s,
@@ -26,12 +26,17 @@ func (s *Store) Manufacturer() store.ManufacturerRepository {
 	return s.manufacturerRepository
 }
 
-func New(conf *config.Database) (*Store, error) {
-	dataSourceName := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=%s password=%s",
-		conf.Host, conf.Port, conf.User, conf.Name, conf.SSLMode, conf.Password,
+func New(settings *config.Database) (*Store, error) {
+	info := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=%s password=%s",
+		settings.Host,
+		settings.Port,
+		settings.User,
+		settings.Name,
+		settings.SSLMode,
+		settings.Password,
 	)
 
-	db, err := sqlx.Connect("postgres", dataSourceName)
+	db, err := sqlx.Connect("postgres", info)
 	if err != nil {
 		return nil, err
 	}

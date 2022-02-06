@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/opencars/vin-decoder-api/pkg/model"
+	"github.com/opencars/vin-decoder-api/pkg/domain/model"
 	"github.com/opencars/vin-decoder-api/pkg/store/sqlstore"
 )
 

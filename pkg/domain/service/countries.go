@@ -1,4 +1,4 @@
-package govin
+package service
 
 type Country struct {
 	From string
