@@ -53,7 +53,7 @@ jobs:
           which migrate
 
       - name: Run migrations
-        run: migrate -source file://migrations -database postgres://postgres:password@localhost:5432/wanted\?sslmode=disable up
+        run: migrate -source file://migrations -database postgres://postgres:password@localhost:5432/vin-decoder\?sslmode=disable up
 
       - name: Test
         run: go test -v ./...
