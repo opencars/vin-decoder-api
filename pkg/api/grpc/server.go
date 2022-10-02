@@ -13,7 +13,7 @@ type vinDecodingHandler struct {
 	api *API
 }
 
-func (h *vinDecodingHandler) FindByNumber(ctx context.Context, r *vin_decoding.DecodeRequest) (*vin_decoding.DecodeResultList, error) {
+func (h *vinDecodingHandler) Decode(ctx context.Context, r *vin_decoding.DecodeRequest) (*vin_decoding.DecodeResultList, error) {
 	c := command.DecodeVINInternal{
 		VINs: r.Vins,
 	}
