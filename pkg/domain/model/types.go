@@ -1,9 +1,27 @@
 package model
 
+import (
+	"regexp"
+)
+
+var (
+	IsVIN = regexp.MustCompile(`^[A-HJ-NPR-Z0-9]{17}$`)
+)
+
 // Result is a union of information about vin-code and decoded vehicle.
 type Result struct {
-	VIN     VIN     `json:"vin"`
-	Vehicle Vehicle `json:"vehicle"`
+	VIN     *VIN            `json:"vin,omitempty"`
+	Vehicle *Vehicle        `json:"vehicle,omitempty"`
+	Error   *ProcesingError `json:"error,,omitempty"`
+}
+
+type ProcesingError struct {
+	Messages []string `json:"messages"`
+}
+
+// Result is a union of information about vin-code and decoded vehicle.
+type BulkResult struct {
+	Results []Result `json:"results"`
 }
 
 // VIN represents detailed information about the VIN code.

@@ -1,20 +1,16 @@
 package command
 
 import (
-	"regexp"
 	"strings"
 	"time"
 
 	"github.com/opencars/schema"
 	"github.com/opencars/schema/vehicle"
 	"github.com/opencars/seedwork"
+	"github.com/opencars/vin-decoder-api/pkg/domain/model"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-)
-
-var (
-	IsVIN = regexp.MustCompile(`^[A-HJ-NPR-Z0-9]{17}$`)
 )
 
 type DecodeVIN struct {
@@ -40,7 +36,7 @@ func (c *DecodeVIN) Validate() error {
 		validation.Field(
 			&c.VIN,
 			validation.Required.Error(seedwork.Required),
-			validation.Match(IsVIN).Error(seedwork.Invalid),
+			validation.Match(model.IsVIN).Error(seedwork.Invalid),
 		),
 	)
 }
