@@ -15,7 +15,8 @@ RUN go mod download
 COPY . .
 
 RUN export VERSION=$(cat VERSION) && \
-    go build -ldflags "-X github.com/opencars/vin-decoder-api/pkg/version.Version=$VERSION" -o /go/bin/server ./cmd/server/main.go
+    go build -ldflags "-X github.com/opencars/vin-decoder-api/pkg/version.Version=$VERSION" -o /go/bin/server ./cmd/server/main.go \
+    go build -ldflags "-X github.com/opencars/vin-decoder-api/pkg/version.Version=$VERSION" -o /go/bin/grpc-server ./cmd/grpc-server/main.go
 
 FROM alpine
 

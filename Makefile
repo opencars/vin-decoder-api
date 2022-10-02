@@ -1,5 +1,5 @@
 .PHONY: default all clean
-APPS     := server
+APPS     := server grpc-server
 BLDDIR   := bin
 VERSION  := $(shell cat VERSION)
 
