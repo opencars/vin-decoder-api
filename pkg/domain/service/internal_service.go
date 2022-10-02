@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/opencars/seedwork"
 
 	"github.com/opencars/vin-decoder-api/pkg/domain"
@@ -23,17 +22,12 @@ func NewInternalService(repo domain.ManufacturerRepository) *InternalService {
 }
 
 func (s *InternalService) Decode(ctx context.Context, c *command.DecodeVINInternal) (*model.BulkResult, error) {
-	results := make([]model.Result, 0, len(c.VINs))
+	results := make([]model.Result, 0, len(c.Items))
 
-	for _, v := range c.VINs {
-		err := validation.Validate(
-			v,
-			validation.Match(model.IsVIN).Error(seedwork.Invalid),
-		)
-
-		if err != nil {
+	for _, v := range c.Items {
+		if err := v.Validate(); err != nil {
 			msgs := make([]string, 0)
-			for k, vv := range seedwork.ErrorMessages("", err) {
+			for k, vv := range seedwork.ErrorMessages("item", err) {
 				for _, v := range vv {
 					msgs = append(msgs, fmt.Sprintf("%s.%s", k, v))
 				}
@@ -48,7 +42,7 @@ func (s *InternalService) Decode(ctx context.Context, c *command.DecodeVINIntern
 			continue
 		}
 
-		vin := Parse(v)
+		vin := Parse(v.VIN)
 
 		result := model.Result{
 			VIN: &model.VIN{

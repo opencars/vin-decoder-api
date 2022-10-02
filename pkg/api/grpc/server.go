@@ -15,7 +15,11 @@ type vinDecodingHandler struct {
 
 func (h *vinDecodingHandler) Decode(ctx context.Context, r *vin_decoding.DecodeRequest) (*vin_decoding.DecodeResultList, error) {
 	c := command.DecodeVINInternal{
-		VINs: r.Vins,
+		Items: make([]command.Item, 0, len(r.Vins)),
+	}
+
+	for _, vin := range r.Vins {
+		c.Items = append(c.Items, command.Item{VIN: vin})
 	}
 
 	result, err := h.api.svc.Decode(ctx, &c)
