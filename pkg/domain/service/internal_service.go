@@ -27,6 +27,7 @@ func (s *InternalService) Decode(ctx context.Context, c *command.DecodeVINIntern
 
 	for _, v := range c.VINs {
 		err := validation.Validate(
+			v,
 			validation.Match(model.IsVIN).Error(seedwork.Invalid),
 		)
 
