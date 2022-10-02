@@ -16,3 +16,7 @@ type ManufacturerRepository interface {
 type CustomerService interface {
 	DecodeVIN(context.Context, *command.DecodeVIN) (*model.Result, error)
 }
+
+type InternalService interface {
+	Decode(context.Context, *command.DecodeVINInternal) (*model.BulkResult, error)
+}

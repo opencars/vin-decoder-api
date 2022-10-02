@@ -28,18 +28,15 @@ func (s *CustomerService) DecodeVIN(ctx context.Context, c *command.DecodeVIN) (
 		return nil, err
 	}
 
-	vin, err := Parse(c.VIN)
-	if err != nil {
-		return nil, err
-	}
+	vin := Parse(c.VIN)
 
 	result := model.Result{
-		VIN: model.VIN{
+		VIN: &model.VIN{
 			WMI: vin.WMI(),
 			VDS: vin.VDS(),
 			VIS: vin.VIS(),
 		},
-		Vehicle: model.Vehicle{
+		Vehicle: &model.Vehicle{
 			Manufacturer: vin.Manufacturer(s.repo),
 			Country:      vin.Country(),
 			Year:         vin.Year(),

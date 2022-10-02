@@ -15,12 +15,12 @@ const yearSym = "ABCDEFGHJKLMNPRSTVWXY123456789"
 
 var weights = []int{8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2}
 
-func Parse(value string) (*VIN, error) {
+func Parse(value string) *VIN {
 	return &VIN{
 		wmi: value[0:3],
 		vds: value[3:9],
 		vis: value[9:17],
-	}, nil
+	}
 }
 
 type VIN struct {
