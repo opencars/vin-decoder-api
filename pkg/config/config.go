@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"gopkg.in/yaml.v2"
 )
@@ -37,21 +38,36 @@ type Database struct {
 	SSLMode  string `yaml:"ssl_mode"`
 }
 
+type NodeNATS struct {
+	Host string `yaml:"host"`
+	Port int    `yaml:"port"`
+}
+
+func (node *NodeNATS) Address(user, password string) string {
+	if user != "" && password != "" {
+		return fmt.Sprintf("nats://%s:%s@%s:%d", user, password, node.Host, node.Port)
+	}
+
+	return fmt.Sprintf("nats://%s:%d", node.Host, node.Port)
+}
+
 // NATS contains configuration details for application event API.
 type NATS struct {
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
-	User     string `yaml:"user"`
-	Password string `yaml:"password"`
+	Nodes    []NodeNATS `yaml:"nodes"`
+	User     string     `yaml:"user"`
+	Password string     `yaml:"password"`
 }
 
 // Address returns calculated address for connecting to NATS.
 func (nats *NATS) Address() string {
-	if nats.User != "" && nats.Password != "" {
-		return fmt.Sprintf("nats://%s:%s@%s:%d", nats.User, nats.Password, nats.Host, nats.Port)
+	addrs := make([]string, 0)
+
+	for _, node := range nats.Nodes {
+		addrs = append(addrs, node.Address(nats.User, nats.Password))
+
 	}
 
-	return fmt.Sprintf("nats://%s:%d", nats.Host, nats.Port)
+	return strings.Join(addrs, ",")
 }
 
 // New reads application configuration from specified file path.
