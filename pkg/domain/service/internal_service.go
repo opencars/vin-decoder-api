@@ -43,6 +43,7 @@ func (s *InternalService) Decode(ctx context.Context, c *command.DecodeVINIntern
 		}
 
 		vin := Parse(v.VIN)
+		country := vin.Country()
 
 		result := model.Result{
 			VIN: &model.VIN{
@@ -52,11 +53,15 @@ func (s *InternalService) Decode(ctx context.Context, c *command.DecodeVINIntern
 			},
 			Vehicle: &model.Vehicle{
 				Manufacturer: vin.Manufacturer(s.repo),
-				Country:      vin.Country(),
 				Year:         vin.Year(),
 				Region:       vin.Region(),
 				Check:        vin.Check(),
 			},
+		}
+
+		if result.Vehicle != nil {
+			result.Vehicle.Country = country.Name
+			result.Vehicle.CountryUA = country.NameUA
 		}
 
 		results = append(results, result)

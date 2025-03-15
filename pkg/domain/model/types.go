@@ -4,9 +4,7 @@ import (
 	"regexp"
 )
 
-var (
-	IsVIN = regexp.MustCompile(`^[A-HJ-NPR-Z0-9]{17}$`)
-)
+var IsVIN = regexp.MustCompile(`^[A-HJ-NPR-Z0-9]{17}$`)
 
 // Result is a union of information about vin-code and decoded vehicle.
 type Result struct {
@@ -35,6 +33,7 @@ type VIN struct {
 type Vehicle struct {
 	Manufacturer string `json:"manufacturer"`
 	Country      string `json:"country"`
+	CountryUA    string `json:"country_ua"`
 	Year         *uint  `json:"year,omitempty"`
 	Region       Region `json:"region"`
 	Check        bool   `json:"check"`

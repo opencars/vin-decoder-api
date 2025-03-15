@@ -10,8 +10,10 @@ import (
 	"github.com/opencars/vin-decoder-api/pkg/domain/model"
 )
 
-const chars = "ABCDEFGHIJKLMNOPRSTUVWXYZ1234567890"
-const yearSym = "ABCDEFGHJKLMNPRSTVWXY123456789"
+const (
+	chars   = "ABCDEFGHIJKLMNOPRSTUVWXYZ1234567890"
+	yearSym = "ABCDEFGHJKLMNPRSTVWXY123456789"
+)
 
 var weights = []int{8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2}
 
@@ -167,15 +169,15 @@ func (vin VIN) Manufacturer(repo domain.ManufacturerRepository) string {
 	return manufacturer.Name
 }
 
-func (vin VIN) Country() string {
+func (vin VIN) Country() *Country {
 	qi := IndexOf(vin.wmi[:2])
 	for _, country := range countries {
 		i := IndexOf(country.From)
 		j := IndexOf(country.To)
 		if qi >= i && qi <= j {
-			return country.Name
+			return &country
 		}
 	}
 
-	return "Not assigned"
+	return nil
 }

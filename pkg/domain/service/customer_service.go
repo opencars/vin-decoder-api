@@ -29,6 +29,7 @@ func (s *CustomerService) DecodeVIN(ctx context.Context, c *command.DecodeVIN) (
 	}
 
 	vin := Parse(c.VIN)
+	country := vin.Country()
 
 	result := model.Result{
 		VIN: &model.VIN{
@@ -38,11 +39,15 @@ func (s *CustomerService) DecodeVIN(ctx context.Context, c *command.DecodeVIN) (
 		},
 		Vehicle: &model.Vehicle{
 			Manufacturer: vin.Manufacturer(s.repo),
-			Country:      vin.Country(),
 			Year:         vin.Year(),
 			Region:       vin.Region(),
 			Check:        vin.Check(),
 		},
+	}
+
+	if result.Vehicle != nil {
+		result.Vehicle.Country = country.Name
+		result.Vehicle.CountryUA = country.NameUA
 	}
 
 	if err := s.p.Produce(ctx, c.Event()); err != nil {

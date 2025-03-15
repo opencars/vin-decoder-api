@@ -1,4 +1,4 @@
-FROM golang:1.19-alpine AS build
+FROM golang:1.23-alpine AS build
 
 ENV GO111MODULE=on
 
@@ -17,9 +17,6 @@ COPY . .
 RUN export VERSION=$(cat VERSION) && \
     go build -ldflags "-X github.com/opencars/vin-decoder-api/pkg/version.Version=$VERSION" -o /go/bin/server ./cmd/server/main.go
 
-RUN export VERSION=$(cat VERSION) && \
-    go build -ldflags "-X github.com/opencars/vin-decoder-api/pkg/version.Version=$VERSION" -o /go/bin/grpc-server ./cmd/grpc-server/main.go
-
 FROM alpine
 
 RUN apk update && apk upgrade && apk add curl
@@ -28,5 +25,5 @@ WORKDIR /app
 
 COPY --from=build /go/bin/ ./
 
-EXPOSE 8080
+EXPOSE 8080 3000
 CMD ["./server"]

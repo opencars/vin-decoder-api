@@ -1,6 +1,8 @@
 module github.com/opencars/vin-decoder-api
 
-go 1.19
+go 1.23.0
+
+toolchain go1.23.2
 
 require (
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
@@ -12,6 +14,7 @@ require (
 	github.com/opencars/schema v0.0.10
 	github.com/opencars/seedwork v0.0.2
 	github.com/stretchr/testify v1.7.0
+	golang.org/x/sync v0.12.0
 	google.golang.org/genproto v0.0.0-20200825200019-8632dd797987
 	google.golang.org/grpc v1.43.0
 	google.golang.org/protobuf v1.27.1
