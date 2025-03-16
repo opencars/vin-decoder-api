@@ -6,6 +6,7 @@ import (
 
 	"github.com/opencars/grpc/pkg/vin_decoding"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
 	"github.com/opencars/vin-decoder-api/pkg/domain"
 )
@@ -31,6 +32,11 @@ func New(addr string, svc domain.InternalService) *API {
 	}
 }
 
+// Server returns the underlying gRPC server instance.
+func (a *API) Server() *grpc.Server {
+	return a.s
+}
+
 func (a *API) Run(ctx context.Context) error {
 	listener, err := net.Listen("tcp", a.addr)
 	if err != nil {
@@ -39,6 +45,9 @@ func (a *API) Run(ctx context.Context) error {
 	defer listener.Close()
 
 	vin_decoding.RegisterServiceServer(a.s, &vinDecodingHandler{api: a})
+
+	// Register reflection service
+	reflection.Register(a.s)
 
 	errors := make(chan error)
 	go func() {
