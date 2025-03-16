@@ -10,7 +10,6 @@ import (
 	"github.com/opencars/schema/client"
 	"github.com/opencars/seedwork/logger"
 	"golang.org/x/sync/errgroup"
-	"google.golang.org/grpc/reflection"
 
 	"github.com/opencars/vin-decoder-api/pkg/api/grpc"
 	"github.com/opencars/vin-decoder-api/pkg/api/http"
@@ -73,9 +72,6 @@ func main() {
 		addr := ":" + strconv.Itoa(*grpcPort)
 		logger.Infof("Starting gRPC server on %s...", addr)
 		api := grpc.New(addr, internalSvc)
-
-		// Add reflection service
-		reflection.Register(api.Server())
 
 		return api.Run(ctx)
 	})
